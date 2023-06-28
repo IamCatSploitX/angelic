@@ -1,0 +1,129 @@
+local q = "imperio"
+local Key = "z" -- Key that toggles script
+local plr = game.Players.LocalPlayer
+local char = plr.Character
+local mouse = plr:GetMouse()
+local KeyDown = false
+_G.toggle = false
+
+local circleRadius = 5 -- Radius of the circular motion
+local circleSpeed = 50 -- Speed of the circular motion in units per second
+local projectileHeight = 10 -- Height of the projectile above the player's torso
+local numProjectiles = 10000000000000000000000000000000000000000000000000000000000000000000 -- Number of projectiles to spawn
+
+function shoot()
+    for i = 1, numProjectiles do
+        local angle = 2 * math.pi * (i / numProjectiles) -- Angle for each projectile around the circle
+        local spawnPosition = calculateCirclePosition(char.HumanoidRootPart.Position, angle)
+        local v = (spawnPosition - char.HumanoidRootPart.Position).unit
+        local w = v * 3
+        plr.PlayerGui.Client.fwp:Fire(spawnPosition, w, true, q)
+        game.ReplicatedStorage.Events.ProjEvent:FireServer(spawnPosition, w, q)
+    end
+end
+
+mouse.KeyDown:Connect(function(key)
+    if key == Key then
+        _G.toggle = not _G.toggle
+    end
+end)
+
+mouse.Button1Down:Connect(function()
+    KeyDown = true
+    while KeyDown and _G.toggle do
+        shoot()
+        wait(0.00000001)
+    end
+end)
+
+mouse.Button1Up:Connect(function()
+    KeyDown = false
+end)
+
+local function findPlayer(name)
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Name == name then
+            return player.Character
+        end
+    end
+    return nil
+end
+
+local function calculateCirclePosition(centerPosition, angle)
+    local offset = Vector3.new(circleRadius * math.cos(angle), 0, circleRadius * math.sin(angle))
+    return centerPosition + Vector3.new(offset.X, projectileHeight, offset.Z)
+end
+
+game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
+    if _G.toggle then
+        local targetCharacter = findPlayer("noob_dabomb8") -- Replace "noob_dabomb8" with the target player's name
+        if targetCharacter then
+            local targetPosition = targetCharacter.UpperTorso.Position
+            local angleIncrement = 2 * math.pi * (circleSpeed / (2 * math.pi * circleRadius)) * deltaTime
+            local angle = (tick() * angleIncrement) % (2 * math.pi) -- Current angle based on time
+            local spawnPosition = calculateCirclePosition(targetPosition, angle)
+            local v = (spawnPosition - char.HumanoidRootPart.Position).unit
+            local w = v * 3
+            plr.PlayerGui.Client.fwp:Fire(spawnPosition, w, true, q)
+            game.ReplicatedStorage.Events.ProjEvent:FireServer(spawnPosition, w, q)
+        end
+    end
+end)
+local q = "incendio"
+local Key = "z" -- Key that toggles script
+local plr = game.Players.LocalPlayer
+local char = plr.Character
+local mouse = plr:GetMouse()
+local KeyDown = false
+local AngelicWings = false
+
+local wingWidth = 10 -- Width of each wing in units
+local wingHeight = 5 -- Height of the wings in units
+local projectileSpacing = 1 -- Spacing between each projectile in units
+local offset = 5.25 -- Offset to the right of the character in units (modified to 15)
+local distanceOffset = -2.25 -- Distance from the character in units
+
+function shoot()
+    local startPos = char.HumanoidRootPart.Position + (char.HumanoidRootPart.CFrame.RightVector * offset) + (char.HumanoidRootPart.CFrame.UpVector * wingHeight) - (char.HumanoidRootPart.CFrame.RightVector * wingWidth * 0.5) - (char.HumanoidRootPart.CFrame.LookVector * 3) - (char.HumanoidRootPart.CFrame.LookVector * distanceOffset)
+
+    for i = 0, wingHeight - 1 do
+        for j = 0, wingWidth - 1 do
+            local spawnPositionLeft = startPos - (char.HumanoidRootPart.CFrame.RightVector * projectileSpacing * j) - (char.HumanoidRootPart.CFrame.UpVector * projectileSpacing * i)
+            local spawnPositionRight = startPos + (char.HumanoidRootPart.CFrame.RightVector * projectileSpacing * (wingWidth - 1 - j)) - (char.HumanoidRootPart.CFrame.UpVector * projectileSpacing * i)
+
+            local vLeft = (spawnPositionLeft - char.HumanoidRootPart.Position).unit
+            local wLeft = vLeft * 3
+            plr.PlayerGui.Client.fwp:Fire(spawnPositionLeft, wLeft, true, q)
+            game.ReplicatedStorage.Events.ProjEvent:FireServer(spawnPositionLeft, wLeft, q)
+
+            local vRight = (spawnPositionRight - char.HumanoidRootPart.Position).unit
+            local wRight = vRight * 3
+            plr.PlayerGui.Client.fwp:Fire(spawnPositionRight, wRight, true, q)
+            game.ReplicatedStorage.Events.ProjEvent:FireServer(spawnPositionRight, wRight, q)
+        end
+    end
+end
+
+mouse.KeyDown:Connect(function(key)
+    if key == Key then
+        AngelicWings = not AngelicWings
+    end
+end)
+
+mouse.Button1Down:Connect(function()
+    KeyDown = true
+    while KeyDown and AngelicWings do
+        shoot()
+        wait(0.00000001)
+    end
+end)
+
+mouse.Button1Up:Connect(function()
+    KeyDown = false
+end)
+
+game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
+    if AngelicWings then
+        shoot()
+    end
+end)
