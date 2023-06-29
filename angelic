@@ -69,7 +69,7 @@ game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
         end
     end
 end)
-local q = "incendio"
+local q = "nox"
 local Key = "z" -- Key that toggles script
 local plr = game.Players.LocalPlayer
 local char = plr.Character
